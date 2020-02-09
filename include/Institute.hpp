@@ -10,30 +10,19 @@
 #include <vector>
 #include <ostream>
 
-struct Object
-{
-    int nrCrt;
-    std::wstring nume;
-    std::wstring deSetat{L""};
-
-    Object(int nrCrt, const std::wstring &nume);
-
-    void setDeSetat(const std::wstring &deSetat);
-
-    friend std::wostream &operator<<(std::wostream &os, const Object &object);
-};
+#include "Student.hpp"
 
 class Institute {
 public:
-    Institute(const std::wstring &numeInstitute, const std::vector<Object> &objects);
+    Institute(const std::wstring &numeInstitute, const std::vector<Student> &students);
 
-    void setOjbect(const int& nrCrt);
+    void setStudent(const int& nrCrt);
 
     friend std::wostream &operator<<(std::wostream &os, const Institute &institute);
 
 private:
     std::wstring numeInstitute;
-    std::vector<Object> objects;
+    std::vector<Student> students;
 };
 
 #endif //VECTOROFOBJECTS_INSTITUTE_HPP

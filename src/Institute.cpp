@@ -5,31 +5,20 @@
 #include "Institute.hpp"
 #include <algorithm>
 
-Object::Object(int nrCrt, const std::wstring &nume) : nrCrt(nrCrt), nume(nume) {}
+Institute::Institute(const std::wstring &numeInstitute, const std::vector<Student> &students) : numeInstitute(
+        numeInstitute), students(students) {}
 
-void Object::setDeSetat(const std::wstring &deSetat) {
-    Object::deSetat = deSetat;
-}
-
-std::wostream &operator<<(std::wostream &os, const Object &object) {
-    os << "nrCrt: " << object.nrCrt << " nume: " << object.nume << " deSetat: " << object.deSetat << "\n";
-    return os;
-}
-
-Institute::Institute(const std::wstring &numeInstitute, const std::vector<Object> &objects) : numeInstitute(
-        numeInstitute), objects(objects) {}
-
-void Institute::setOjbect(const int& nrCrt)
+void Institute::setStudent(const int& nrCrt)
 {
-    auto place = std::find_if(objects.begin(), objects.end(),
-            [&nrCrt](Object& object){return object.nrCrt == nrCrt; });
+    auto place = std::find_if(students.begin(), students.end(),
+            [&nrCrt](Student& student){return student.getNrCrt() == nrCrt; });
 
-    objects.at((place - objects.begin())).setDeSetat(L"setaat");
+    students.at((place - students.begin())).setDeSetat(L"setaat");
 }
 
 std::wostream &operator<<(std::wostream &os, const Institute &institute) {
     os << "nume Institute: " << institute.numeInstitute << " \nobjects: \n";
-    for(auto const& object : institute.objects)
+    for(auto const& object : institute.students)
         os << "\t" << object << " ";
     os << std::endl;
     return os;
