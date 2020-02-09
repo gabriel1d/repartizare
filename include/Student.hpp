@@ -1,9 +1,5 @@
-//
-// Created by gabi on 09.02.2020.
-//
-
-#ifndef REPARTIZARE_STUDENT_HPP
-#define REPARTIZARE_STUDENT_HPP
+#ifndef STUDENT_HPP
+#define STUDENT_HPP
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -11,19 +7,27 @@
 
 class Student {
 public:
-    Student(int nrCrt, const std::wstring &nume);
+    Student(int nrCrt, const std::wstring& numeSiPrenume, int an, int serie, int grupa, const long& nrTelefon,
+            const std::wstring& mail, const double& punctaj, const std::vector<std::wstring>& optiuniAlese);
 
-    void setDeSetat(const std::wstring &deSetat);
+    void setLocRepartizat(const std::wstring &locRepartizat);
 
-    friend std::wostream &operator<<(std::wostream &os, const Student &object);
+    friend std::wostream &operator<<(std::wostream &os, const Student &student);
 
     int getNrCrt() const;
 
 private:
-    int nrCrt;
-    std::wstring nume;
-    std::wstring deSetat{L""};
+    int mNrCrt;
+    std::wstring mNumeSiPrenume;
+    int mAn;
+    int mSerie;
+    int mGrupa;
+    long mNrTelefon;
+    std::wstring mMail;
+    double mPunctaj;
+    std::vector<std::wstring> mOptiuniAlese;
+    std::wstring mLocRepartizat {L""};
 };
 
 
-#endif //REPARTIZARE_STUDENT_HPP
+#endif // STUDENT_HPP

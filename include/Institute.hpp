@@ -1,9 +1,5 @@
-//
-// Created by gabi on 09.02.2020.
-//
-
-#ifndef VECTOROFOBJECTS_INSTITUTE_HPP
-#define VECTOROFOBJECTS_INSTITUTE_HPP
+#ifndef INSTITUTE_HPP
+#define INSTITUTE_HPP
 
 #include <iosfwd>
 #include <string>
@@ -14,15 +10,19 @@
 
 class Institute {
 public:
-    Institute(const std::wstring &numeInstitute, const std::vector<Student> &students);
+    Institute(const std::wstring &numeInstitute);
 
-    void setStudent(const int& nrCrt);
+    void setStudentLocRepartizat(const int& nrCrt);
 
     friend std::wostream &operator<<(std::wostream &os, const Institute &institute);
 
+    void setStudents(const std::vector<Student> &students);
+
 private:
-    std::wstring numeInstitute;
-    std::vector<Student> students;
+    std::wstring mNumeInstitute;
+    std::vector<Student> mStudents;
 };
 
-#endif //VECTOROFOBJECTS_INSTITUTE_HPP
+void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute& institutie);
+
+#endif // INSTITUTE_HPP
