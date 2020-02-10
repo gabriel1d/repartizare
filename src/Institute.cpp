@@ -7,9 +7,9 @@ Institute::Institute(const std::wstring &numeInstitute) : mNumeInstitute(numeIns
 void Institute::setStudentLocRepartizat(const int& nrCrt)
 {
     auto place = std::find_if(mStudents.begin(), mStudents.end(),
-            [&nrCrt](Student& student){return student.getNrCrt() == nrCrt; });
+            [&nrCrt](auto& student){return student->getNrCrt() == nrCrt; });
 
-    mStudents.at((place - mStudents.begin())).setLocRepartizat(L"setaat");
+    mStudents.at((place - mStudents.begin()))->setLocRepartizat(L"setaat");
 }
 
 std::wostream &operator<<(std::wostream &os, const Institute &institute) {
@@ -20,8 +20,12 @@ std::wostream &operator<<(std::wostream &os, const Institute &institute) {
     return os;
 }
 
-void Institute::setStudents(const std::vector<Student> &students) {
-    Institute::mStudents = students;
+void Institute::setStudents(const std::vector<std::shared_ptr<Student>> &mStudents) {
+    Institute::mStudents = mStudents;
+}
+
+const std::vector<std::shared_ptr<Student>> &Institute::getMStudents() const {
+    return Institute::mStudents;
 }
 
 bool replaceCommaWithFullStopForLine(std::wstring& line)
@@ -76,7 +80,7 @@ void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute&
     char *locale = setlocale(LC_ALL, "");
     FILE *inputFile = fopen(fisierulSursa.c_str(), "r");
 
-    std::vector<Student> students;
+    std::vector<std::shared_ptr<Student>> students;
     std::wstring stringLine{};
     wint_t characterfromFile{};
 
@@ -86,7 +90,7 @@ void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute&
             // avem o linie intreaga
             // o modificam sa avem "30.01" in loc de 30,01"
             if(replaceCommaWithFullStopForLine(stringLine) == true)
-                students.emplace_back(getStudentFromLine(stringLine));
+                students.emplace_back(std::make_shared<Student>(getStudentFromLine(stringLine)));
             stringLine.clear();
         } else {
             stringLine += characterfromFile;

@@ -7,6 +7,7 @@
 
 class Student {
 public:
+
     Student(int nrCrt, const std::wstring& numeSiPrenume, int an, int serie, int grupa, const long& nrTelefon,
             const std::wstring& mail, const double& punctaj, const std::vector<std::wstring>& optiuniAlese);
 
