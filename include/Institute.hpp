@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <ostream>
+#include <memory>
 
 #include "Student.hpp"
 
@@ -27,7 +28,7 @@ public:
 
     void setOptiuniPrimite(const std::vector<Optiune> &mOptiuniPrimite);
 
-    void setStudents(const std::vector<Student> &students);
+    void setStudents(std::vector<std::shared_ptr<Student>> &students);
 
     void repartizareStudentiPentruOptiune();
 
@@ -38,7 +39,7 @@ public:
 private:
     std::wstring mNumeInstitute;
     std::vector<Optiune> mOptiuniPrimite;
-    std::vector<Student> mStudents;
+    std::vector<std::shared_ptr<Student>> mStudents;
 };
 
 void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute& institutie);

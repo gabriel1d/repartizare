@@ -28,17 +28,17 @@ int main() {
 
     institut1.setOptiuniPrimite(optiuniPrimite1);
 
-    printareOptiuniPrimite(institut1);
+//    printareOptiuniPrimite(institut1);
 
     incarcareDateStudentiDinFisier("../resources/input_special.csv",institut1);
 
-    std::wcout << std::endl;
-
-    institut1.repartizareStudentiPentruOptiune();
-
-    printareOptiuniPrimite(institut1);
-
-    printfStudents(institut1);
+//    std::wcout << std::endl;
+//
+//    institut1.repartizareStudentiPentruOptiune();
+//
+//    printareOptiuniPrimite(institut1);
+//
+//    printfStudents(institut1);
 //    printareStudenti(institut1);
 //    printareStudentiRepartizatiPentruOptiunea(institut1, L"Nerepartizat");
 
