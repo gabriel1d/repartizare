@@ -16,6 +16,16 @@ public:
 
     int getNrCrt() const;
 
+    const std::vector<std::wstring> &getMOptiuniAlese() const;
+
+    const std::wstring &getMLocRepartizat() const;
+
+    const std::wstring &getMNumeSiPrenume() const;
+
+    double getMPunctaj() const;
+
+    friend void printfStudent(const Student& student);
+
 private:
     int mNrCrt;
     std::wstring mNumeSiPrenume;

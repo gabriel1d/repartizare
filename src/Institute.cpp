@@ -1,6 +1,15 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <iostream>
+#include <fstream>
 #include "Institute.hpp"
+
+Optiune::Optiune(const std::wstring &numeLoc, int numarLocuriDisponibile) : numeLoc(numeLoc), numarLocuriDisponibile(
+        numarLocuriDisponibile)
+{
+    Optiune::numarLocuriRamase = numarLocuriDisponibile;
+}
 
 Institute::Institute(const std::wstring &numeInstitute) : mNumeInstitute(numeInstitute) {}
 
@@ -18,6 +27,10 @@ std::wostream &operator<<(std::wostream &os, const Institute &institute) {
         os << "\t" << object << "\n";
     os << std::endl;
     return os;
+}
+
+void Institute::setOptiuniPrimite(const std::vector<Optiune> &mOptiuniPrimite) {
+    Institute::mOptiuniPrimite = mOptiuniPrimite;
 }
 
 void Institute::setStudents(const std::vector<Student> &students) {
@@ -62,13 +75,131 @@ Student getStudentFromLine(const std::wstring& line)
     auto grupa = std::stoi(elements[4]);
     auto nrTelefon = std::stol(elements[5]);
     auto mail = elements[6];
-    auto punctaj = std::stod(elements[7]);
+    double punctaj = boost::lexical_cast<double>(elements[7]);
 
     Student returnedStudent{nrCrt, numePrenume, an, serie, grupa, nrTelefon, mail, punctaj, optiuniFromLine};
 //    Student returnedStudent{std::stoi(elements[0]), elements[1], std::stoi(elements[2]), std::stoi(elements[3]),
 //                            std::stoi(elements[4]), std::stol(elements[5]), elements[6],std::stod(elements[7]),
 //                            optiuniFromLine};
     return returnedStudent;
+}
+
+int Institute::findOptiuneDupanume(const std::wstring& numeOptiuneAleasa)
+{
+    auto place = std::find_if(mOptiuniPrimite.begin(), mOptiuniPrimite.end(),
+                              [&numeOptiuneAleasa](Optiune& optiuneCurenta){return optiuneCurenta.numeLoc == numeOptiuneAleasa; });
+
+    if( place != mOptiuniPrimite.end())
+        return (place - mOptiuniPrimite.begin());
+    else return -1;
+}
+
+void Institute::repartizareStudentiPentruOptiune()
+{
+    for(auto& student : mStudents)
+    {
+        bool isRepartizat = false;
+        int numarOptiuneCurenta = 0;
+        auto optiuniAlese = student.getMOptiuniAlese();
+
+        do
+        {
+            //check if
+            auto locOptiuneInVector = findOptiuneDupanume(optiuniAlese.at(numarOptiuneCurenta));
+            if(locOptiuneInVector != -1)
+            {
+                if (mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase != 0)
+                {
+                    student.setLocRepartizat(optiuniAlese.at(numarOptiuneCurenta));
+                    --mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase;
+                    isRepartizat = true;
+                } else
+                {
+                    ++numarOptiuneCurenta;
+                }
+            }
+        }while (numarOptiuneCurenta != optiuniAlese.size() && !isRepartizat);
+
+        if(!isRepartizat)
+        {
+            student.setLocRepartizat(L"Nerepartizat");
+        }
+    }
+}
+
+void printfStudents(const Institute& institute)
+{
+    wprintf(L"%-7ls  %-35ls  %-5ls  %-5ls  %-5ls  %-15ls  %-35ls  %-10ls%-25ls %-25ls %-25ls %-25ls %-25ls %-25ls% -10ls\n"
+            , L"Nr Crt.", L"Nume si Prenume", L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
+            , L"Optiune1", L"Optiune2", L"Optiune3", L"Optiune4", L"Optiune5", L"Optiune6", L"Repartizare");
+    for( auto const& student: institute.mStudents)
+        printfStudent(student);
+}
+void printareOptiuniPrimite(const Institute &institute)
+{
+    for(auto const& optiune : institute.mOptiuniPrimite)
+        std::wcout << optiune.numeLoc << L" " << optiune.numarLocuriDisponibile << L" " << optiune.numarLocuriRamase << L"\n";
+}
+
+void printareStudenti(const Institute &institute)
+{
+    for(auto const& student : institute.mStudents)
+        std::wcout << "\t" << student << "\n";
+    std::wcout << std::endl;
+}
+
+void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune)
+{
+    for(auto& student : institute.mStudents)
+    {
+        if(student.getMLocRepartizat() == optiune)
+            std::wcout << "\t" << student << "\n";
+    }
+    std::wcout << std::endl;
+}
+void sendStudents(const Institute& institute)
+{
+    char *locale = setlocale(LC_ALL, "");
+    FILE* outputFile = fopen( "../resources/Studenti_din_institutie.csv", "w");
+
+    for(auto& student : institute.mStudents)
+    {
+        fwprintf(outputFile,L"%d,",student.getNrCrt());
+        fwprintf(outputFile,L"%10s,",L"");
+        fwprintf(outputFile,student.getMNumeSiPrenume().c_str());
+        fwprintf(outputFile,L",%.2lf,",student.getMPunctaj());
+        for(auto const& optiune : student.getMOptiuniAlese()) {
+            fwprintf(outputFile, optiune.c_str());
+            fwprintf(outputFile, L",");
+        }
+        fwprintf(outputFile,student.getMLocRepartizat().c_str());
+        fwprintf(outputFile,L"\n");
+    }
+
+    fclose(outputFile);
+}
+void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile)
+{
+    char *locale = setlocale(LC_ALL, "");
+    FILE* outputFile = fopen( stringOutputFile.c_str(), "w");
+
+    for(auto& student : institute.mStudents)
+    {
+        if(student.getMLocRepartizat() == optiune)
+        {
+            fwprintf(outputFile,L"%d,",student.getNrCrt());
+            fwprintf(outputFile,student.getMNumeSiPrenume().c_str());
+            fwprintf(outputFile,L",%.5lf,",student.getMPunctaj());
+            for(auto const& optiune : student.getMOptiuniAlese()) {
+                fwprintf(outputFile, optiune.c_str());
+                fwprintf(outputFile, L",");
+            }
+            fwprintf(outputFile,student.getMLocRepartizat().c_str());
+            fwprintf(outputFile,L"\n");
+        }
+    }
+
+    fclose(outputFile);
 }
 
 void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute& institutie)
@@ -84,6 +215,8 @@ void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute&
         characterfromFile = fgetwc(inputFile);
         if (characterfromFile == L'\n' || characterfromFile == WEOF) {
             // avem o linie intreaga
+            // eliminam \r
+            stringLine.erase( std::remove(stringLine.begin(), stringLine.end(), '\r'), stringLine.end() );
             // o modificam sa avem "30.01" in loc de 30,01"
             if(replaceCommaWithFullStopForLine(stringLine) == true)
                 students.emplace_back(getStudentFromLine(stringLine));
