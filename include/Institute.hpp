@@ -23,8 +23,6 @@ public:
 
     void setStudentLocRepartizat(const int& nrCrt);
 
-    friend std::wostream &operator<<(std::wostream &os, const Institute &institute);
-
     int findOptiuneDupanume(const std::wstring& numeOptiuneAleasa);
 
     void setOptiuniPrimite(const std::vector<Optiune> &mOptiuniPrimite);
@@ -35,8 +33,6 @@ public:
 
     friend void printfStudents(const Institute& institute);
     friend void printareOptiuniPrimite(const Institute &institute);
-    friend void sendStudents(const Institute& institute);
-    friend void printareStudenti(const Institute &institute);
     friend void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune);
     friend void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile);
 private:

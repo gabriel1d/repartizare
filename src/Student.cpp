@@ -10,17 +10,6 @@ void Student::setLocRepartizat(const std::wstring &locRepartizat) {
     Student::mLocRepartizat = locRepartizat;
 }
 
-std::wostream &operator<<(std::wostream &os, const Student &student) {
-    os << "mNrCrt: " << student.mNrCrt << " mNumeSiPrenume: " << student.mNumeSiPrenume << " mAn: " << student.mAn
-       << " mSerie: " << student.mSerie << " mGrupa: " << student.mGrupa << " mNrTelefon: " << student.mNrTelefon
-       << " mMail: " << student.mMail << " mPunctaj: " << student.mPunctaj << " mOptiuniAlese:";
-    for(auto const& optiune : student.mOptiuniAlese)
-        os << " " << optiune;
-    os << " mLocRepartizat: " << student.mLocRepartizat;
-
-    return os;
-}
-
 int Student::getNrCrt() const {
     return mNrCrt;
 }
@@ -55,14 +44,6 @@ void printfStudent(const Student& student)
             wprintf(L"%-25ls ", L"-");
 
     }
-//    for(auto const& optiuneAleasa : student.mOptiuniAlese)
-//        if(optiuneAleasa != L"")
-//        {
-//            wprintf(L"%-25ls ", optiuneAleasa.c_str());
-//        }else
-//        {
-//            wprintf(L"%-25ls ", L"-");
-//        }
 
     wprintf(L"%-10ls", student.mLocRepartizat.c_str());
     wprintf(L"\n");

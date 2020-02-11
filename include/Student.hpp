@@ -12,8 +12,6 @@ public:
 
     void setLocRepartizat(const std::wstring &locRepartizat);
 
-    friend std::wostream &operator<<(std::wostream &os, const Student &student);
-
     int getNrCrt() const;
 
     const std::vector<std::wstring> &getMOptiuniAlese() const;

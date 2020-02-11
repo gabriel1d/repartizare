@@ -21,14 +21,6 @@ void Institute::setStudentLocRepartizat(const int& nrCrt)
     mStudents.at((place - mStudents.begin())).setLocRepartizat(L"setaat");
 }
 
-std::wostream &operator<<(std::wostream &os, const Institute &institute) {
-    os << "nume Institute: " << institute.mNumeInstitute << " \nobjects: \n";
-    for(auto const& object : institute.mStudents)
-        os << "\t" << object << "\n";
-    os << std::endl;
-    return os;
-}
-
 void Institute::setOptiuniPrimite(const std::vector<Optiune> &mOptiuniPrimite) {
     Institute::mOptiuniPrimite = mOptiuniPrimite;
 }
@@ -132,20 +124,14 @@ void printfStudents(const Institute& institute)
     wprintf(L"%-7ls  %-35ls  %-5ls  %-5ls  %-5ls  %-15ls  %-35ls  %-10ls%-25ls %-25ls %-25ls %-25ls %-25ls %-25ls% -10ls\n"
             , L"Nr Crt.", L"Nume si Prenume", L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
             , L"Optiune1", L"Optiune2", L"Optiune3", L"Optiune4", L"Optiune5", L"Optiune6", L"Repartizare");
+
     for( auto const& student: institute.mStudents)
         printfStudent(student);
 }
 void printareOptiuniPrimite(const Institute &institute)
 {
     for(auto const& optiune : institute.mOptiuniPrimite)
-        std::wcout << optiune.numeLoc << L" " << optiune.numarLocuriDisponibile << L" " << optiune.numarLocuriRamase << L"\n";
-}
-
-void printareStudenti(const Institute &institute)
-{
-    for(auto const& student : institute.mStudents)
-        std::wcout << "\t" << student << "\n";
-    std::wcout << std::endl;
+        wprintf(L"%-25ls%3d%4d\n",optiune.numeLoc.c_str(), optiune.numarLocuriDisponibile, optiune.numarLocuriRamase);
 }
 
 void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune)
@@ -153,31 +139,11 @@ void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const
     for(auto& student : institute.mStudents)
     {
         if(student.getMLocRepartizat() == optiune)
-            std::wcout << "\t" << student << "\n";
+            printfStudent(student);
     }
     std::wcout << std::endl;
 }
-void sendStudents(const Institute& institute)
-{
-    char *locale = setlocale(LC_ALL, "");
-    FILE* outputFile = fopen( "../resources/Studenti_din_institutie.csv", "w");
 
-    for(auto& student : institute.mStudents)
-    {
-        fwprintf(outputFile,L"%d,",student.getNrCrt());
-        fwprintf(outputFile,L"%10s,",L"");
-        fwprintf(outputFile,student.getMNumeSiPrenume().c_str());
-        fwprintf(outputFile,L",%.2lf,",student.getMPunctaj());
-        for(auto const& optiune : student.getMOptiuniAlese()) {
-            fwprintf(outputFile, optiune.c_str());
-            fwprintf(outputFile, L",");
-        }
-        fwprintf(outputFile,student.getMLocRepartizat().c_str());
-        fwprintf(outputFile,L"\n");
-    }
-
-    fclose(outputFile);
-}
 void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile)
 {
     char *locale = setlocale(LC_ALL, "");
