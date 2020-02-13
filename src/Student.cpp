@@ -6,6 +6,11 @@ Student::Student(int nrCrt, const std::wstring& numeSiPrenume, int an, int serie
                  : mNrCrt(nrCrt), mNumeSiPrenume(numeSiPrenume), mAn(an), mSerie(serie), mGrupa(grupa), mNrTelefon(nrTelefon)
                  , mMail(mail), mPunctaj(punctaj), mOptiuniAlese(optiuniAlese) {}
 
+void Student::setCentruDeOrigine(const std::wstring &centruDeOrigine)
+{
+    Student::mCentruDeOrigine = centruDeOrigine;
+}
+
 void Student::setLocRepartizat(const std::wstring &locRepartizat) {
     Student::mLocRepartizat = locRepartizat;
 }
@@ -32,7 +37,9 @@ double Student::getMPunctaj() const {
 
 void printfStudent(const Student& student)
 {
-    wprintf(L"%-7d  %-35ls  %-5d  %-5d  %-5d  %-15ld  %-35ls  %-10.2f", student.mNrCrt, student.mNumeSiPrenume.c_str(), student.mAn, student.mSerie, student.mGrupa, student.mNrTelefon, student.mMail.c_str(), student. mPunctaj);
+    wprintf(L"%-10ls  %-7d  %-35ls  %-5d  %-5d  %-5d  %-15ld  %-35ls  %-10.2f", student.mCentruDeOrigine.c_str()
+            , student.mNrCrt, student.mNumeSiPrenume.c_str(), student.mAn, student.mSerie, student.mGrupa
+            , student.mNrTelefon, student.mMail.c_str(), student.mPunctaj);
 
     for(size_t it = 0; it < 6; ++it)
     {

@@ -22,7 +22,7 @@ class Institute {
 public:
     Institute(const std::wstring &numeInstitute);
 
-    void setStudentLocRepartizat(const int& nrCrt);
+    const std::wstring &getMNumeInstitute() const;
 
     int findOptiuneDupanume(const std::wstring& numeOptiuneAleasa);
 
@@ -32,14 +32,18 @@ public:
 
     void repartizareStudentiPentruOptiune();
 
+    void incarcareStudentiStraini(const Institute& insittute);
+
     friend void printfStudents(const Institute& institute);
+    friend void printfStudentiStraini(const Institute& institute);
     friend void printareOptiuniPrimite(const Institute &institute);
     friend void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune);
     friend void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile);
 private:
     std::wstring mNumeInstitute;
     std::vector<Optiune> mOptiuniPrimite;
-    std::vector<std::shared_ptr<Student>> mStudents;
+    std::vector<std::shared_ptr<Student>> mStudentiProprii;
+    std::vector<std::shared_ptr<Student>> mStudentiStraini;
 };
 
 void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute& institutie);

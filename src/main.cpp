@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Institute.hpp>
 #include "Institute.hpp"
 
 int main() {
@@ -32,12 +33,28 @@ int main() {
 
     incarcareDateStudentiDinFisier("../resources/input_special.csv",institut1);
 
-//    std::wcout << std::endl;
+    std::wcout << std::endl;
+
+    institut1.repartizareStudentiPentruOptiune();
+
+//    printfStudents(institut1);
 //
-//    institut1.repartizareStudentiPentruOptiune();
-//
-//    printareOptiuniPrimite(institut1);
-//
+    int a =1;
+    wprintf(L"\n");
+//    printareStudentiRepartizatiPentruOptiunea(institut1, L"Nerepartizat");
+
+    Institute institute2{L"Cluj-Napoca-fără cazare"};
+    incarcareDateStudentiDinFisier("../resources/cluj.csv", institute2);
+    institute2.incarcareStudentiStraini(institut1);
+//    printfStudents(institute2);
+//    printfStudentiStraini(institute2);
+
+//    Institute institute3{L"Brașov-fără cazare"};
+//    incarcareDateStudentiDinFisier("../resources/brasov.csv", institute3);
+//    institute3.incarcareStudentiStraini(institut1);
+//    institute3.incarcareStudentiStraini(institut1);
+//    printfStudents(institute3);
+//    printfStudentiStraini(institute3);
 //    printfStudents(institut1);
 //    printareStudenti(institut1);
 //    printareStudentiRepartizatiPentruOptiunea(institut1, L"Nerepartizat");

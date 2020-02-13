@@ -13,21 +13,13 @@ Optiune::Optiune(const std::wstring &numeLoc, int numarLocuriDisponibile) : nume
 
 Institute::Institute(const std::wstring &numeInstitute) : mNumeInstitute(numeInstitute) {}
 
-//void Institute::setStudentLocRepartizat(const int& nrCrt)
-//{
-//    auto place = std::find_if(mStudents.begin(), mStudents.end(),
-//            [&nrCrt](Student& student){return student.getNrCrt() == nrCrt; });
-//
-//    mStudents.at((place - mStudents.begin()))->setLocRepartizat(L"setaat");
-//}
-
 void Institute::setOptiuniPrimite(const std::vector<Optiune> &mOptiuniPrimite) {
     Institute::mOptiuniPrimite = mOptiuniPrimite;
 }
 
 void Institute::setStudents(std::vector<std::shared_ptr<Student>> &students)
 {
-    Institute::mStudents = std::move(students);
+    Institute::mStudentiProprii = std::move(students);
 }
 
 bool replaceCommaWithFullStopForLine(std::wstring& line)
@@ -77,80 +69,103 @@ Student getStudentFromLine(const std::wstring& line)
     return returnedStudent;
 }
 
-//int Institute::findOptiuneDupanume(const std::wstring& numeOptiuneAleasa)
-//{
-//    auto place = std::find_if(mOptiuniPrimite.begin(), mOptiuniPrimite.end(),
-//                              [&numeOptiuneAleasa](Optiune& optiuneCurenta){return optiuneCurenta.numeLoc == numeOptiuneAleasa; });
-//
-//    if( place != mOptiuniPrimite.end())
-//        return (place - mOptiuniPrimite.begin());
-//    else return -1;
-//}
-//
-//void Institute::repartizareStudentiPentruOptiune()
-//{
-//    for(auto& student : mStudents)
-//    {
-//        bool isRepartizat = false;
-//        int numarOptiuneCurenta = 0;
-//        auto optiuniAlese = student.getMOptiuniAlese();
-//
-//        do
-//        {
-//            //check if
-//            auto locOptiuneInVector = findOptiuneDupanume(optiuniAlese.at(numarOptiuneCurenta));
-//            if(locOptiuneInVector != -1)
-//            {
-//                if (mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase != 0)
-//                {
-//                    student.setLocRepartizat(optiuniAlese.at(numarOptiuneCurenta));
-//                    --mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase;
-//                    isRepartizat = true;
-//                } else
-//                {
-//                    ++numarOptiuneCurenta;
-//                }
-//            }
-//        }while (numarOptiuneCurenta != optiuniAlese.size() && !isRepartizat);
-//
-//        if(!isRepartizat)
-//        {
-//            student.setLocRepartizat(L"Nerepartizat");
-//        }
-//    }
-//}
-//
-//void printfStudents(const Institute& institute)
-//{
-//    wprintf(L"%-7ls  %-35ls  %-5ls  %-5ls  %-5ls  %-15ls  %-35ls  %-10ls%-25ls %-25ls %-25ls %-25ls %-25ls %-25ls% -10ls\n"
-//            , L"Nr Crt.", L"Nume si Prenume", L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
-//            , L"Optiune1", L"Optiune2", L"Optiune3", L"Optiune4", L"Optiune5", L"Optiune6", L"Repartizare");
-//
-//    for( auto const& student: institute.mStudents)
-//        printfStudent(student);
-//}
-//void printareOptiuniPrimite(const Institute &institute)
-//{
-//    for(auto const& optiune : institute.mOptiuniPrimite)
-//        wprintf(L"%-25ls%3d%4d\n",optiune.numeLoc.c_str(), optiune.numarLocuriDisponibile, optiune.numarLocuriRamase);
-//}
-//
-//void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune)
-//{
-//    for(auto& student : institute.mStudents)
-//    {
-//        if(student.getMLocRepartizat() == optiune)
-//            printfStudent(student);
-//    }
-//    std::wcout << std::endl;
-//}
-//
+int Institute::findOptiuneDupanume(const std::wstring& numeOptiuneAleasa)
+{
+    auto place = std::find_if(mOptiuniPrimite.begin(), mOptiuniPrimite.end(),
+                              [&numeOptiuneAleasa](Optiune& optiuneCurenta){return optiuneCurenta.numeLoc == numeOptiuneAleasa; });
+
+    if( place != mOptiuniPrimite.end())
+        return (place - mOptiuniPrimite.begin());
+    else return -1;
+}
+
+void Institute::repartizareStudentiPentruOptiune()
+{
+    for(auto& student : mStudentiProprii)
+    {
+        bool isRepartizat = false;
+        int numarOptiuneCurenta = 0;
+        auto optiuniAlese = student->getMOptiuniAlese();
+
+        do
+        {
+            //check if
+            auto locOptiuneInVector = findOptiuneDupanume(optiuniAlese.at(numarOptiuneCurenta));
+            if(locOptiuneInVector != -1)
+            {
+                if (mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase != 0)
+                {
+                    student->setLocRepartizat(optiuniAlese.at(numarOptiuneCurenta));
+                    --mOptiuniPrimite.at(locOptiuneInVector).numarLocuriRamase;
+                    isRepartizat = true;
+                } else
+                {
+                    ++numarOptiuneCurenta;
+                }
+            }
+        }while (numarOptiuneCurenta != optiuniAlese.size() && !isRepartizat);
+
+        if(!isRepartizat)
+        {
+            student->setLocRepartizat(L"Nerepartizat");
+        }
+    }
+}
+
+void Institute::incarcareStudentiStraini(const Institute& institute)
+{
+    for(size_t it = 0; it < institute.mStudentiProprii.size(); ++it)
+    {
+        if(institute.mStudentiProprii.at(it)->getMLocRepartizat() == Institute::getMNumeInstitute())
+            Institute::mStudentiStraini.emplace_back(institute.mStudentiProprii.at(it));
+    }
+}
+
+void printfStudents(const Institute& institute)
+{
+    wprintf(L"%-10ls  %-7ls  %-35ls  %-5ls  %-5ls  %-5ls  %-15ls  %-35ls  %-10ls%-25ls %-25ls %-25ls %-25ls %-25ls %-25ls% -10ls\n"
+            , L"Centru", L"Nr Crt.", L"Nume si Prenume", L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
+            , L"Optiune1", L"Optiune2", L"Optiune3", L"Optiune4", L"Optiune5", L"Optiune6", L"Repartizare");
+
+    for(auto const& student: institute.mStudentiProprii)
+        printfStudent(*student);
+}
+void printfStudentiStraini(const Institute& institute)
+{
+    wprintf(L"%-10ls  %-7ls  %-35ls  %-5ls  %-5ls  %-5ls  %-15ls  %-35ls  %-10ls%-25ls %-25ls %-25ls %-25ls %-25ls %-25ls% -10ls\n"
+            , L"Centru", L"Nr Crt.", L"Nume si Prenume", L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
+            , L"Optiune1", L"Optiune2", L"Optiune3", L"Optiune4", L"Optiune5", L"Optiune6", L"Repartizare");
+
+    for(auto const& student: institute.mStudentiStraini)
+        printfStudent(*student);
+}
+
+void printareOptiuniPrimite(const Institute &institute)
+{
+    for(auto const& optiune : institute.mOptiuniPrimite)
+        wprintf(L"%-25ls%3d%4d\n",optiune.numeLoc.c_str(), optiune.numarLocuriDisponibile, optiune.numarLocuriRamase);
+}
+
+void printareStudentiRepartizatiPentruOptiunea(const Institute& institute, const std::wstring& optiune)
+{
+    for(auto const& student : institute.mStudentiProprii)
+    {
+        if(student->getMLocRepartizat() == optiune)
+            printfStudent(*student);
+    }
+    std::wcout << std::endl;
+}
+
+const std::wstring &Institute::getMNumeInstitute() const {
+    return mNumeInstitute;
+}
+
 //void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile)
 //{
 //    char *locale = setlocale(LC_ALL, "");
 //    FILE* outputFile = fopen( stringOutputFile.c_str(), "w");
 //
-//    for(auto& student : institute.mStudents)
+//    for(auto& student : institute.mStudentiProprii)
 //    {
 //        if(student.getMLocRepartizat() == optiune)
 //        {
@@ -185,7 +200,7 @@ void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute&
             // eliminam \r
             stringLine.erase( std::remove(stringLine.begin(), stringLine.end(), '\r'), stringLine.end() );
             // o modificam sa avem "30.01" in loc de 30,01"
-            if(replaceCommaWithFullStopForLine(stringLine) == true)
+            if(replaceCommaWithFullStopForLine(stringLine))
                 students.emplace_back(std::make_shared<Student>(getStudentFromLine(stringLine)));
             stringLine.clear();
         } else {
@@ -194,5 +209,9 @@ void incarcareDateStudentiDinFisier(const std::string& fisierulSursa, Institute&
     } while (characterfromFile != EOF);
 
     fclose(inputFile);
+    for(auto& student : students)
+    {
+        student->setCentruDeOrigine(institutie.getMNumeInstitute());
+    }
     institutie.setStudents(students);
 }

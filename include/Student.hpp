@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 #include <ostream>
+#include <memory>
 
 class Student {
 public:
     Student(int nrCrt, const std::wstring& numeSiPrenume, int an, int serie, int grupa, const long& nrTelefon,
             const std::wstring& mail, const double& punctaj, const std::vector<std::wstring>& optiuniAlese);
 
+    void setCentruDeOrigine(const std::wstring &centruDeOrigine);
     void setLocRepartizat(const std::wstring &locRepartizat);
 
     int getNrCrt() const;
@@ -25,6 +27,7 @@ public:
     friend void printfStudent(const Student& student);
 
 private:
+    std::wstring mCentruDeOrigine {L""};
     int mNrCrt;
     std::wstring mNumeSiPrenume;
     int mAn;
