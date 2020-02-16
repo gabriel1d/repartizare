@@ -2,7 +2,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <iostream>
-#include <fstream>
 #include "Institute.hpp"
 
 Optiune::Optiune(const std::wstring &numeLoc, int numarLocuriDisponibile) : numeLoc(numeLoc), numarLocuriDisponibile(
@@ -160,6 +159,58 @@ const std::wstring &Institute::getMNumeInstitute() const {
     return mNumeInstitute;
 }
 
+void Institute::incarcareStudentiPropriiDinCsv(const std::string& fisierulSursa)
+{
+    std::unique_ptr<CsvParser> parser{std::make_unique<CsvParser>(fisierulSursa)};
+
+    bool bIsHeaderMatchingInputHeader;
+    bIsHeaderMatchingInputHeader = parser->headerMatchesInputHeader(L"Nr. Crt.", L"Nume si prenume"
+            , L"An", L"Serie", L"Grupa", L"Telefon", L"Mail", L"Punctaj"
+            , L"Optiune 1", L"Optiune 2", L"Optiune 3", L"Optiune 4", L"Optiune 5", L"Optiune 6");
+    if(bIsHeaderMatchingInputHeader)
+    {
+        std::vector<std::shared_ptr<Student>> studentsFromCsv;
+
+        std::vector<std::wstring> elementsFromLine;
+        while(parser->parseRow(elementsFromLine))
+        {
+            std::vector<std::wstring> optiuniFromLine;
+            for(size_t i = 8 ; i < elementsFromLine.size() && !elementsFromLine.at(i).empty(); ++i )
+                optiuniFromLine.emplace_back(elementsFromLine.at(i));
+            auto nrCrt = std::stoi(elementsFromLine[0]);
+            auto numePrenume = elementsFromLine[1];
+            auto an = elementsFromLine[2];
+            auto serie = elementsFromLine[3];
+            auto grupa = elementsFromLine[4];
+            auto nrTelefon = elementsFromLine[5];
+            auto mail = elementsFromLine[6];
+            double punctaj = boost::lexical_cast<double>(elementsFromLine[7]);
+
+            Student studentFromLine{nrCrt, numePrenume, an, serie, grupa, nrTelefon, mail, punctaj, optiuniFromLine};
+            studentFromLine.setCentruDeOrigine(Institute::mNumeInstitute);
+            studentsFromCsv.emplace_back(std::make_shared<Student>(studentFromLine));
+        }
+        setStudents(studentsFromCsv);
+    }
+}
+
+//void Institute::incarcareLocuriDinTabel(const LocuriMG &tabel)
+//{
+//    for (auto const &linie : tabel.getTabelLocuriMg())
+//        if (Institute::mNumeInstitute == linie.at(0))
+//        {
+//            // creare vector de optiuni;
+//            std::vector<Optiune> optiuniDinTabel;
+//            for (size_t it = 1; it < linie.size(); ++it)
+//                if (linie.at(it) != L"-1")
+//                {
+//                    auto numarLocuri = boost::lexical_cast<int>(linie.at(it));
+//                    Optiune loc{tabel.getInstitutiiGazda().at(it - 1), numarLocuri};
+//                    optiuniDinTabel.emplace_back(loc);
+//                }
+//            Institute::mOptiuniPrimite = optiuniDinTabel;
+//        }
+//}
 //void sendStudentsToCSV(const Institute& institute, const std::wstring& optiune, const std::string& stringOutputFile)
 //{
 //    char *locale = setlocale(LC_ALL, "");

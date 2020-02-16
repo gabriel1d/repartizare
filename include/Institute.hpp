@@ -32,6 +32,10 @@ public:
 
     void repartizareStudentiPentruOptiune();
 
+    void incarcareStudentiPropriiDinCsv(const std::string& fisierulSursa);
+
+//    void incarcareLocuriDinTabel(const LocuriMG& tabel);
+
     void incarcareStudentiStraini(const Institute& insittute);
 
     friend void printfStudents(const Institute& institute);
